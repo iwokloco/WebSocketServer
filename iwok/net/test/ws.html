@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>WebSockets</title>
+</head>
+<body>
+<script type="text/javascript">
+var ws = null;
+var msg = null;
+var chat = null;
+
+function connect() {
+    var URL = 'ws://127.0.0.1:1702';
+    if ('WebSocket' in window) {
+        ws = new WebSocket(URL);
+    } else if ('MozWebSocket' in window) {
+        ws = new MozWebSocket(URL);
+    } else {
+        alert('Tu navegador no soporta WebSockets');
+        return;
+    }
+    ws.onopen = function () {
+        // pintamos mensaje
+        alert('Concectado!');
+        ws.send("chupate esa coyote espacial");
+    };
+    ws.onmessage = function (event) {
+        var message = event.data;
+        chat.innerHTML+=message+"</br>";
+    };
+    ws.onclose = function () {
+        alert('Desconectado!');
+    };
+    ws.onerror = function (event) {
+        alert('Se produjo un error! ');
+    };   
+    alert(ws.readyState);
+}
+ 
+function disconnect() {
+    if (ws != null) {
+        ws.close();
+        ws = null;
+    }
+}
+     
+function sendMessage(message) {
+    if (ws != null) {
+        ws.send(message);
+    }
+}
+
+
+
+function init() {
+	connect();	
+	msg = document.getElementById("msg");
+	chat = document.getElementById("chat");
+}  
+
+window.onload = init;
+
+</script>
+<input id="msg" type="text"></input><div onclick="sendMessage(msg.value);">Enviar</div>
+<div id="chat"></div>
+</body>
+</html>
